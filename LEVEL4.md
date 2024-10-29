@@ -1,26 +1,25 @@
 이 글은 React를 사용하는 프론트엔드 개발 초보를 위해 React와 TypeScript를 활용한 공통 컴포넌트를 만드는 법을 안내합니다.
-여기서 다루는 내용은 기초적인 수준으로, 공통 컴포넌트의 지원 범위를 설정하는 것이나 웹 접근성 심화처럼 깊은 주제 대신 '재사용 가능한 공통 컴포넌트'를 만드는 방법을 다룹니다.
-React를 써 보긴 했지만 공통 컴포넌트를 어떻게 만들어야 할지 막막한 분들에게 추천드립니다.
+여기서 다루는 내용은 기초적인 수준으로, 단순히 '재사용 가능한 공통 컴포넌트'를 만드는 방법을 다룹니다. 그러므로 React를 써 보긴 했지만 공통 컴포넌트를 어떻게 만들어야 할지 막막한 분들에게 추천드립니다.
 
 # **컴포넌트는 무엇일까**
 
 ## **통상적인 의미의 컴포넌트**
 
-컴포넌트는 재사용할 수 있는 코드 블럭입니다. 꼭 컴포넌트라는 단어를 쓰지 않아도 이렇게 재사용가능한 코드 조각이라는 개념은 프로그래밍 전반에서 통용되는 중요한 개념입니다.
+컴포넌트는 재사용할 수 있는 코드 블럭입니다. 꼭 컴포넌트라는 단어를 쓰지 않아도,  '재사용가능한 코드 조각'은 프로그래밍 전반에서 통용되는 중요한 개념입니다.
 
-**리액트 공식 문서의 컴포넌트**
+**React 공식 문서의 컴포넌트**
 
-그렇다면 FE 개발, 나아가 리액트에서의 컴포넌트는 무엇일까요?
-사람에 따라 정의하는 방식이 조금씩 다르지만 여기서는 컴포넌트란 화면에 그려질 무언가를 리턴하는 JavaScript 함수라고 하겠습니다.
+React에서의 컴포넌트는 무엇일까요?
+사람에 따라 정의가 조금씩 달라지지만, 여기서는 화면에 그려질 무언가를 리턴하는 JavaScript 함수라고 하겠습니다.
 
 # **공통 컴포넌트란?**
 
-공통 컴포넌트는 컴포넌트의 의미 중 ‘재사용성’에 집중한 컴포넌트입니다.
+그렇다면 공통 컴포넌트는 무엇을 의미할까요? 말 그대로 공통 컴포넌트는 컴포넌트의 의미 중 ‘재사용성’에 집중한 컴포넌트입니다. 재사용성을 높여 많은 곳에서 활용할 수 있기에 공통 컴포넌트라고 부릅니다.
 
 ## **특화된 컴포넌트**
 
-앞선 통상적인 의미의 컴포넌트에서 컴포넌트는 재사용 가능하다고 했으나, 어떤 컴포넌트는 비교적 특정 기능에 특화되어 재사용성이 떨어지기도 합니다.
-예를 들어 아래와 같은 컴포넌트는 비밀번호 입력에 특화된 상태입니다. 
+앞서 컴포넌트는 재사용 가능한 코드 블럭이라고 했지만, 어떤 컴포넌트는 비교적 특정 기능에 특화되어 재사용성이 떨어지기도 합니다.
+예를 들어 아래와 같은 컴포넌트는 비밀번호 입력에 특화되어 있습니다. 
 
 ```tsx
 interface PasswordInputProps {
@@ -44,20 +43,19 @@ const PasswordInput = ({ password, setPassword }: PasswordInputProps) => {
 };
 
 ```
-
-비밀번호 외의 다른 정보(사용자 이름, 주소 등)를 입력받는 `input`이 필요할 때 이 `PasswordInput`을 재활용할 수 없기 때문입니다. 리턴되는 input의 `id`가 `password-input`이고, `type` 또한 `password`라서 비밀번호가 아닌 일반 텍스트 형태로 입력을 받고 싶다면 또다른 `input` 컴포넌트를 만들어야 합니다.
+리턴되는 input의 `id`가 `password-input`이고, `type` 또한 `password`라서 비밀번호가 아닌 일반 텍스트 형태로 입력을 받고 싶다면 또다른 `input` 컴포넌트를 만들어야 합니다.
+즉 사용자 이름, 이메일 주소처럼 비밀번호 외의 정보를 입력받는 `input`이 필요할 때 이 `PasswordInput`을 재활용할 수 없습니다. 
 
 ## **공통 컴포넌트**
 
-반면 공통 컴포넌트는 컴포넌트의 재사용성에 집중해 다양한 상황에서 재활용할 수 있는 컴포넌트입니다.
-아래와 같은 `input` 컴포넌트는 `props`를 이용해 `input` 컴포넌트 외부에서 상황별로 커스텀할 수 있는, 즉 더 자유도가 높은 컴포넌트입니다.
+반면 아래와 같은 `input` 컴포넌트는 `input` 컴포넌트 외부에서 상황별로 변수를 커스텀할 수 있는, 즉 더 자유도가 높은 컴포넌트입니다.
 
 ```tsx
 interface InputProps {
-  type: React.InputHTMLAttributes<HTMLInputElement>['type'];
+  id: string;
   value: string;
+  type: React.InputHTMLAttributes<HTMLInputElement>['type'];
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  id?: string;
 }
 
 const Input = ({ id, value, onChange, type }: InputProps) => {
@@ -72,10 +70,11 @@ const Input = ({ id, value, onChange, type }: InputProps) => {
 };
 ```
 
-이전 코드와의 차이점이 무엇일까요?
+이전 코드와의 차이점은 무엇일까요?
+
 이전 코드에서는 `input`의 `id`와 `type`을 `Input` 컴포넌트 안에서 고정해버렸는데, 이제는 외부에서 자유롭게 지정할 수 있습니다.
 이를테면 `id`를 `username-input` 등으로 설정하고 `type`도 `text`로 넘겨주면 사용자의 이름을 입력하는 `Input` 컴포넌트로 만들 수 있고, 아까처럼 `type`이 `password`인 비밀번호 입력 `Input`으로도 활용할 수 있습니다.
-이런 방식으로 보다 다양한 상황에서의 재활용 가능성을 고려한 컴포넌트가 공통 컴포넌트입니다. 
+이런 방식으로 보다 다양한 상황에서의 재활용을 고려한 컴포넌트가 공통 컴포넌트입니다. 
 
 # **공통 컴포넌트에 타입 적용하기**
 
@@ -87,10 +86,10 @@ const Input = ({ id, value, onChange, type }: InputProps) => {
 
 ```tsx
 interface InputProps {
-  type: React.InputHTMLAttributes<HTMLInputElement>['type'];
+  id: string;
   value: string;
+  type: React.InputHTMLAttributes<HTMLInputElement>['type'];
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  id?: string;
 }
 
 const Input = ({ id, value, onChange, type }: InputProps) => {
@@ -132,7 +131,7 @@ const Input = ({
 
 `React.InputHTMLAttributes<HTMLInputElement>`는 React에서 `input` 요소에 적용할 수 있는 속성들을 타입으로 정의한 것입니다. 이 타입은 `input` 요소의 모든 표준 HTML 속성을 포함하고 있습니다.
 
-현재 `props`로 받아오고 있는 모든 속성은 `React.InputHTMLAttributes<HTMLInputElement>`에 포함된 속성들이므로 타입 에러가 나지 않고, 위에서처럼 별도의 인터페이스 등으로 이 속성들을 지정해줄 필요도 없습니다.
+현재 `props`로 받아오고 있는 모든 속성은 `React.InputHTMLAttributes<HTMLInputElement>`에 포함된 속성들이므로 타입 에러가 나지 않고, 아까처럼 별도의 인터페이스를 만들고 속성들을 지정해줄 필요도 없습니다.
 
 또한 `rest props`와 결합해 코드를 더 간편하게 작성할 수도 있습니다.
 ```tsx
@@ -142,8 +141,9 @@ const Input = ({ ...rest }: React.InputHTMLAttributes<HTMLInputElement>) => {
 ```
 
 이외에도 `React.InputHTMLAttributes<HTMLInputElement>`에서 특정 속성만을 제외하고 싶다면 `Omit`을 통해 제거하는 등 다양한 타입 커스텀을 할 수 있습니다.
+
 이렇게만 보면 타이핑도 적고 유연한 후자가 더 편리해보이지만, 공통 컴포넌트의 자유도를 어디까지 둘 것인지에 따라 어떤 방법을 선택할지가 결정됩니다. 높은 자유도가 항상 좋기만 한 건 아니니까요. 
-이와 관련된 내용은 본 글에서 다루는 범위를 넘기 때문에 [이 내용을 다루는 글](https://fe-developers.kakaoent.com/2024/240116-common-component/)을 소개하고 넘어가겠습니다. 지금은 공통 컴포넌트에 typescript를 도입했을 때 어떻게 타입을 지정할 수 있는지만 알고 넘어가도 좋을 것 같습니다.
+이와 관련된 내용은 본 글에서 다루는 범위를 넘기 때문에 [이 내용을 다루는 글](https://fe-developers.kakaoent.com/2024/240116-common-component/)을 소개하고 넘어가겠습니다. 지금은 공통 컴포넌트에 typescript를 도입했을 때 어떻게 타입을 지정할 수 있는지만 짚고 넘어가겠습니다.
 
 ---
 
@@ -186,7 +186,7 @@ export default Checkbox;
 ```
 
 CSS 작업 대신 사용할 `Checkbox` 이미지도 `button` 태그의 자식으로 두면 쉽게 `Checkbox` 컴포넌트를 구현할 수 있습니다. 
-이 체크박스는 잘 동작하지만(단 자연스럽게 보이려면 별도의 스타일 작업이 필요합니다), 시맨틱 마크업 관점에서 문제가 있습니다.
+이 `Checkbox`는 잘 동작하지만(단 자연스럽게 보이려면 별도의 스타일 작업이 필요합니다), 시맨틱 마크업 관점에서 문제가 있습니다.
 
 웹 페이지를 만들 때는 잘 동작하는 기능도 중요하지만 의미론적인 요소도 함께 챙겨 줘야 하기 때문입니다.
 시맨틱 마크업을 통해 의미를 살려주는 작업은 웹 접근성 측면에서도 중요하지만 다른 개발자가 코드를 보고 이 컴포넌트가 무슨 역할을 하는지를 쉽게 알아볼 수 있다는 면에서도 중요합니다. 
@@ -215,7 +215,7 @@ const Checkbox = ({ id, isChecked, onChange }: CheckboxProps) => {
 ### input과 label
 
 이럴 때는 `label`을 사용해서 `input`과 `img`를 연결해주면 됩니다. 
-좁은 의미의 `label`은 `input` 에 대한 설명을 제공하는 태그지만, 넓게 봤을 때는 `for`(리액트에서는 `htmlFor`)를 통해 `input`과 다른 요소들을 이어 `input`과 관련된 정보를 명시적으로 전달하는 역할을 합니다.
+좁은 의미의 `label`은 `input` 에 대한 설명을 제공하는 태그지만, 넓게 봤을 때는 `for`(React에서는 `htmlFor`)를 통해 `input`과 다른 요소들을 이어 `input`과 관련된 정보를 명시적으로 전달하는 역할을 합니다.
 적용하는 방법은 두 가지인데, 둘 다 간단합니다.
 
 #### 직접적으로 label 명시하기
@@ -262,7 +262,7 @@ return (
 두 방법은 취향 차이라고 생각하는데, 이 글에서는 첫 번째 방법을 사용하도록 하겠습니다.
 
 이제 스타일을 입혀볼 차례입니다. 
-자잘한 스타일 조정들이 많은데, 가장 중요한 건 html에서 기본으로 보여주는 `input` 대신 체크박스 이미지를 사용해야 하니 `input`의 `display`를 `none`으로 설정해 화면에서 없애주는 것입니다. (라이브러리는 `@emotion/styled`를 사용했습니다.)
+자잘한 스타일 조정들이 많은데, 가장 중요한 건 html에서 기본으로 보여주는 `input` 대신 이미지를 사용해야 하니 `input`의 `display`를 `none`으로 설정해 화면에서 없애주는 것입니다. (라이브러리는 `@emotion/styled`를 사용했습니다.)
 
 ```tsx
 export const CheckboxContainer = styled.div`
@@ -307,7 +307,7 @@ const Checkbox = ({ id, isChecked, onChange }: CheckboxProps) => {
 
 ```
 
-스타일을 입히니 이제 기본 `input` 요소는 사라지고 우리가 사용할 체크박스 이미지만 남게 되었습니다.
+스타일을 입히니 이제 기본 `input` 요소는 사라지고 우리가 사용할 이미지만 남게 되었습니다.
   
 ## 속성 열어두기
 
