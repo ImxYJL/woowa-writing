@@ -178,13 +178,12 @@ const inputElement = document.createElement('input');
 
 ```jsx
 <Input
-	id="1"
-	name="example-input"
+  id="1"
+  name="example-input"
   type="checkbox"
   checked={true}
   disabled={false}
-	readonly={false}
-	onChange={()=>{}}
+  onChange={()=>{}}
 />
 ```
 
@@ -329,7 +328,7 @@ export const CheckboxContainer = styled.div`
 `;
 
 export const Checkbox = styled.input`
-	/* 주의: 키보드 접근성 이슈가 있습니다. */
+  /* 주의: 키보드 접근성 이슈가 있습니다. */
   position: absolute;
   clip: rect(1px, 1px, 1px, 1px);
   clip-path: inset(100%);
